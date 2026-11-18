@@ -69,7 +69,7 @@ class ApiClient {
 
     late http.Response res;
     try {
-      res = await http.Response.fromStream(await req.send().timeout(const Duration(seconds: 20)));
+      res = await http.Response.fromStream(await req.send().timeout(const Duration(seconds: 60)));
     } on TimeoutException {
       throw ApiException(0, _netError);
     } on Exception {
@@ -107,7 +107,7 @@ class ApiClient {
       final res = await http
           .post(Uri.parse('$baseUrl/auth/refresh'),
               headers: {'Content-Type': 'application/json'}, body: jsonEncode({'refresh_token': r}))
-          .timeout(const Duration(seconds: 15));
+          .timeout(const Duration(seconds: 45));
       if (res.statusCode != 200) return false;
       final j = jsonDecode(res.body);
       await tokens.save(j['access_token'], j['refresh_token']);
