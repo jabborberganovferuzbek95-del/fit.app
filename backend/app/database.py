@@ -10,6 +10,12 @@ class Base(DeclarativeBase):
 
 
 def make_engine(url: str):
+    # Render va boshqa bulutli bazalar `postgres://` berishi mumkin, SQLAlchemy esa `postgresql+psycopg2://` talab qiladi
+    if url.startswith("postgres://"):
+        url = url.replace("postgres://", "postgresql+psycopg2://", 1)
+    elif url.startswith("postgresql://") and not url.startswith("postgresql+psycopg2://"):
+        url = url.replace("postgresql://", "postgresql+psycopg2://", 1)
+
     kwargs: dict = {}
     is_sqlite = url.startswith("sqlite")
     if is_sqlite:
