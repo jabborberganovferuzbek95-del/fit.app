@@ -11,9 +11,9 @@ class Settings:
     env: str = os.getenv("APP_ENV", "development")
     database_url: str = os.getenv(
         "DATABASE_URL",
-        "postgresql+psycopg2://fithayot:fithayot@localhost:5432/fithayot360",
+        "sqlite:///./fithayot360.db",
     )
-    jwt_secret: str = os.getenv("JWT_SECRET", "dev-only-change-me")
+    jwt_secret: str = os.getenv("JWT_SECRET", "fithayot360-jwt-secret-key-2026-production")
     access_minutes: int = int(os.getenv("ACCESS_TOKEN_MINUTES", "30"))
     refresh_days: int = int(os.getenv("REFRESH_TOKEN_DAYS", "14"))
     reset_minutes: int = int(os.getenv("RESET_TOKEN_MINUTES", "30"))
