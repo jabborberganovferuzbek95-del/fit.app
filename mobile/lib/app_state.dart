@@ -24,11 +24,19 @@ class AppState extends ChangeNotifier {
     status = AuthStatus.loading;
     bootError = null;
     notifyListeners();
-    _onboarded = await tokens.onboarded;
-    final tm = await tokens.theme;
-    themeMode = tm == 'dark' ? ThemeMode.dark : (tm == 'light' ? ThemeMode.light : ThemeMode.system);
-    if (await tokens.access == null && await tokens.refresh == null) return _signedOut();
+
     try {
+      _onboarded = await tokens.onboarded;
+      final tm = await tokens.theme;
+      themeMode = tm == 'dark' ? ThemeMode.dark : (tm == 'light' ? ThemeMode.light : ThemeMode.system);
+
+      final acc = await tokens.access;
+      final ref = await tokens.refresh;
+      if (acc == null && ref == null) {
+        _signedOut();
+        return;
+      }
+
       await loadMe();
     } on ApiException catch (e) {
       if (e.status == 0 || e.status >= 500) {
@@ -38,6 +46,9 @@ class AppState extends ChangeNotifier {
         await tokens.clear();
         _signedOut();
       }
+    } catch (_) {
+      // Har qanday boshqa kutilmagan xatolik bo'lsa ham yuklanishda qotib qolmasdan ochiladi
+      _signedOut();
     }
   }
 

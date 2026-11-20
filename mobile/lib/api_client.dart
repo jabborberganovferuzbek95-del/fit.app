@@ -15,23 +15,67 @@ class ApiException implements Exception {
 }
 
 class TokenStore {
-  final _s = const FlutterSecureStorage();
-  Future<String?> get access => _s.read(key: 'access');
-  Future<String?> get refresh => _s.read(key: 'refresh');
+  final _s = const FlutterSecureStorage(
+    aOptions: AndroidOptions(encryptedSharedPreferences: true),
+  );
+
+  Future<String?> get access async {
+    try {
+      return await _s.read(key: 'access');
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<String?> get refresh async {
+    try {
+      return await _s.read(key: 'refresh');
+    } catch (_) {
+      return null;
+    }
+  }
+
   Future<void> save(String a, String r) async {
-    await _s.write(key: 'access', value: a);
-    await _s.write(key: 'refresh', value: r);
+    try {
+      await _s.write(key: 'access', value: a);
+      await _s.write(key: 'refresh', value: r);
+    } catch (_) {}
   }
 
   Future<void> clear() async {
-    await _s.delete(key: 'access');
-    await _s.delete(key: 'refresh');
+    try {
+      await _s.delete(key: 'access');
+      await _s.delete(key: 'refresh');
+    } catch (_) {}
   }
 
-  Future<String?> get theme => _s.read(key: 'theme');
-  Future<void> setTheme(String v) => _s.write(key: 'theme', value: v);
-  Future<bool> get onboarded async => (await _s.read(key: 'onboarded')) == '1';
-  Future<void> setOnboarded() => _s.write(key: 'onboarded', value: '1');
+  Future<String?> get theme async {
+    try {
+      return await _s.read(key: 'theme');
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> setTheme(String v) async {
+    try {
+      await _s.write(key: 'theme', value: v);
+    } catch (_) {}
+  }
+
+  Future<bool> get onboarded async {
+    try {
+      return (await _s.read(key: 'onboarded')) == '1';
+    } catch (_) {
+      return false;
+    }
+  }
+
+  Future<void> setOnboarded() async {
+    try {
+      await _s.write(key: 'onboarded', value: '1');
+    } catch (_) {}
+  }
 }
 
 class ApiClient {
